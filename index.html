@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artisan Roots | Handcrafted with love, delivered with care</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --primary-dark: #c9184a;
+            --accent: #2a9d8f;
+            --bg-light: #fdfcf0;
+            /* Warm paper-like cream */
+            --indie-orange: #f4a261;
+            --indie-mustard: #e9c46a;
+            --glass: rgba(255, 255, 255, 0.85);
+            /* Bright glass */
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --text-dark: #0f172a;
+            /* Typed font in black/dark charcoal */
+            --font-main: 'Outfit', sans-serif;
+            --font-title: 'Playfair Display', serif;
+            --indie-shadow: 8px 8px 0px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(255, 77, 109, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(42, 157, 143, 0.05) 0%, transparent 40%),
+                url('https://www.transparenttextures.com/patterns/handmade-paper.png');
+            color: var(--text-dark);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .indie-pattern-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('C:/Users/HP/.gemini/antigravity/brain/719d3a4c-c81c-402c-86e8-64cc71283bd6/light_indie_pattern_design_1771615051317.png');
+            background-size: 500px;
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: -1;
+            filter: grayscale(0.2) contrast(1.1);
+        }
+
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .overlay {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        nav {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(253, 252, 240, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: var(--font-title);
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+            transform: skewX(-20deg);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-item {
+            position: relative;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-item:hover {
+            color: var(--primary);
+            transform: rotate(-2deg) scale(1.1);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -15px;
+            background: var(--accent-yellow);
+            color: var(--text-dark);
+            font-size: 0.75rem;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            border: 2px solid var(--text-dark);
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 3rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 6rem 1rem;
+            animation: indiePop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+            border: 4px solid var(--text-dark);
+            border-radius: 40px;
+            margin-bottom: 4rem;
+            box-shadow: var(--indie-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '✿';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 3rem;
+            color: var(--primary);
+            opacity: 0.2;
+        }
+
+        @keyframes indiePop {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .hero h1 {
+            font-family: var(--font-title);
+            font-size: 5rem;
+            line-height: 0.9;
+            margin-bottom: 2rem;
+            color: var(--text-dark);
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            color: var(--text-dark);
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        /* Search & Filters */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 4rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .search-bar {
+            background: white;
+            border: 2px solid var(--text-dark);
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            color: var(--text-dark);
+            width: 300px;
+            box-shadow: 4px 4px 0px var(--text-dark);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--text-dark);
+            width: 100%;
+            outline: none;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .search-bar:focus-within {
+            transform: scale(1.05);
+            box-shadow: 6px 6px 0px var(--primary);
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            background: white;
+            border: 3px solid var(--text-dark);
+            cursor: pointer;
+            font-weight: 800;
+            transition: all 0.3s ease;
+            box-shadow: 4px 4px 0px var(--text-dark);
+        }
+
+        .tab.active {
+            background: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 6px 6px 0px var(--text-dark);
+        }
+
+        .tab:hover:not(.active) {
+            background: var(--bg-light);
+            transform: translateY(-2px);
+        }
+
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 3rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.2rem;
+            border: 2px solid var(--text-dark);
+            box-shadow: 8px 8px 0px var(--glass-border);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 12px 12px 0px var(--text-dark);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 250px;
+            background: #eee;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 3px solid var(--text-dark);
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
+        }
+
+        .product-info {
+            flex-grow: 1;
+        }
+
+        .product-category {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--primary);
+            font-weight: 800;
+            margin-bottom: 0.6rem;
+        }
+
+        .product-name {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 0.8rem;
+            line-height: 1.1;
+        }
+
+        .product-price {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--text-dark);
+            background: var(--accent-yellow);
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border: 2px solid var(--text-dark);
+            transform: rotate(-2deg);
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .btn-add {
+            background: var(--indie-orange);
+            color: white;
+            border: 2px solid var(--text-dark);
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 3px 3px 0px var(--text-dark);
+        }
+
+        .btn-add:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 5px 0px var(--text-dark);
+        }
+
+        .wishlist-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .wishlist-btn.active {
+            color: var(--primary);
+        }
+
+        /* Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--bg-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            color: var(--text-dark);
+        }
+
+        .close-modal:hover {
+            opacity: 1;
+        }
+
+        /* Admin Panel Styles */
+        .admin-form {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group label {
+            font-size: 0.9rem;
+            color: var(--accent);
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 0.8rem;
+            border-radius: 10px;
+            color: var(--text-dark);
+            outline: none;
+        }
+
+        /* Cart View */
+        .cart-item {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--glass-border);
+            align-items: center;
+        }
+
+        .cart-item-img {
+            width: 80px;
+            height: 80px;
+            background: #334155;
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        .cart-total {
+            margin-top: 2rem;
+            text-align: right;
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .btn-checkout {
+            display: block;
+            width: 100%;
+            background: var(--accent);
+            color: var(--bg-dark);
+            border: none;
+            padding: 1rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-checkout:hover {
+            opacity: 0.9;
+            transform: scale(0.98);
+        }
+
+        footer {
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--glass-border);
+            margin-top: 4rem;
+            opacity: 0.7;
+            color: var(--text-dark);
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-bar {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="indie-pattern-overlay"></div>
+    <canvas id="three-canvas"></canvas>
+
+    <div class="overlay">
+        <nav>
+            <div class="logo" onclick="app.navigate('home')">Artisan Roots</div>
+            <div class="nav-links">
+                <div class="nav-item" onclick="app.navigate('home')"><i data-lucide="home"></i> Home</div>
+                <div class="nav-item" onclick="app.navigate('catalog')"><i data-lucide="shopping-bag"></i> Shop</div>
+                <div class="nav-item" onclick="app.showAdmin()"><i data-lucide="shield"></i> Admin</div>
+                <div class="nav-item" onclick="app.toggleCart()">
+                    <i data-lucide="shopping-cart"></i> Cart
+                    <span class="cart-count" id="cart-count">0</span>
+                </div>
+                <div class="nav-item" onclick="app.toggleLogin()">
+                    <i data-lucide="user"></i> <span id="user-display">Login</span>
+                </div>
+            </div>
+            <!-- Mobile Toggle -->
+            <div class="mobile-menu-btn" style="display: none;"><i data-lucide="menu"></i></div>
+        </nav>
+
+        <main id="app-root">
+            <!-- Content will be injected here -->
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Artisan Roots | Handcrafted with ❤️ & Plants</p>
+        </footer>
+    </div>
+
+    <!-- Modals -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <div class="close-modal" onclick="app.toggleCart()"><i data-lucide="x"></i></div>
+            <h2 style="font-family: var(--font-title); margin-bottom: 2rem;">Your Shopping Cart</h2>
+            <div id="cart-items">
+                <!-- Cart items grid -->
+            </div>
+            <div class="cart-total" id="cart-total">Total: INR 0</div>
+            <button class="btn-checkout" onclick="app.checkout()">Secure Checkout</button>
+        </div>
+    </div>
+
+    <div id="admin-modal" class="modal">
+        <div class="modal-content">
+            <div class="close-modal" onclick="app.hideAdmin()"><i data-lucide="x"></i></div>
+            <h2 style="font-family: var(--font-title); margin-bottom: 2rem;">Admin Panel</h2>
+            <form class="admin-form" id="product-form">
+                <div class="input-group">
+                    <label>Product Name</label>
+                    <input type="text" id="p-name" placeholder="E.g. Vintage Plant Pot" required>
+                </div>
+                <div class="input-group">
+                    <label>Category</label>
+                    <select id="p-category">
+                        <option value="Handcrafts">Handcrafts</option>
+                        <option value="Plants">Plants</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Price (INR)</label>
+                    <input type="number" id="p-price" placeholder="600" required>
+                </div>
+                <div class="input-group">
+                    <label>Description</label>
+                    <textarea id="p-desc" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn-add" style="justify-content: center; margin-top: 1rem;">Add
+                    Product</button>
+            </form>
+            <div style="margin-top: 3rem;">
+                <h3>Active Inventory</h3>
+                <div id="admin-inventory-list" style="margin-top: 1rem;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="auth-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <div class="close-modal" onclick="app.toggleLogin()"><i data-lucide="x"></i></div>
+            <h2 style="font-family: var(--font-title); margin-bottom: 1.5rem;">Join Bloom & Brush</h2>
+            <p style="margin-bottom: 2rem; opacity: 0.8;">Sign in to save your wishlist and track orders.</p>
+            <button onclick="app.handleGoogleAuth()" class="btn-checkout"
+                style="background: white; color: black; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" width="20" alt="Google">
+                Sign in with Google
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- THREE.JS BACKGROUND ---
+        class Scene3D {
+            constructor() {
+                this.container = document.getElementById('three-canvas');
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                this.renderer = new THREE.WebGLRenderer({ canvas: this.container, antialias: true, alpha: true });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+                this.objects = [];
+                this.init();
+            }
+
+            init() {
+                // Lights
+                const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+                this.scene.add(ambientLight);
+
+                const pointLight = new THREE.PointLight(0xff4d6d, 4);
+                pointLight.position.set(2, 3, 4);
+                this.scene.add(pointLight);
+
+                const pointLight2 = new THREE.PointLight(0xf4a261, 4); // Indie Orange
+                pointLight2.position.set(-2, -3, 4);
+                this.scene.add(pointLight2);
+
+                const pointLight3 = new THREE.PointLight(0x2a9d8f, 4); // Indie Teal
+                pointLight3.position.set(0, 5, -5);
+                this.scene.add(pointLight3);
+
+                // Create more "organic" and vibrant shapes for indie look
+                const geometries = [
+                    new THREE.TorusKnotGeometry(1, 0.4, 100, 16),
+                    new THREE.SphereGeometry(1, 32, 32),
+                    new THREE.IcosahedronGeometry(1.2, 0),
+                    new THREE.CapsuleGeometry(0.8, 1, 4, 16)
+                ];
+
+                const colors = [0xff4d6d, 0x4cc9f0, 0xffbe0b, 0x7209b7, 0xef476f];
+
+                for (let i = 0; i < 20; i++) {
+                    const colors = [0xff4d6d, 0x00f5d4, 0xf4a261, 0xe9c46a, 0x2a9d8f];
+                    const material = new THREE.MeshPhongMaterial({
+                        color: colors[i % colors.length],
+                        shininess: 100,
+                        transparent: true,
+                        opacity: 0.4,
+                        wireframe: i % 4 === 0
+                    }); const mesh = new THREE.Mesh(geometries[Math.floor(Math.random() * geometries.length)], material);
+
+                    mesh.position.set(
+                        (Math.random() - 0.5) * 20,
+                        (Math.random() - 0.5) * 20,
+                        (Math.random() - 2) * 8
+                    );
+
+                    mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+                    mesh.scale.setScalar(Math.random() * 0.4 + 0.1);
+
+                    this.scene.add(mesh);
+                    this.objects.push({
+                        mesh,
+                        rotSpeed: (Math.random() - 0.5) * 0.005,
+                        bobSpeed: Math.random() * 0.001,
+                        bobOffset: Math.random() * Math.PI * 2
+                    });
+                }
+
+                this.camera.position.z = 6;
+                this.animate();
+
+                window.addEventListener('resize', () => this.onResize());
+                window.addEventListener('mousemove', (e) => this.onMouseMove(e));
+            }
+
+            onResize() {
+                this.camera.aspect = window.innerWidth / window.innerHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+
+            onMouseMove(e) {
+                const x = (e.clientX / window.innerWidth - 0.5) * 2;
+                const y = -(e.clientY / window.innerHeight - 0.5) * 2;
+
+                gsap.to(this.camera.position, {
+                    x: x * 0.5,
+                    y: y * 0.5,
+                    duration: 1
+                });
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                const time = Date.now() * 0.001;
+                this.objects.forEach(obj => {
+                    obj.mesh.rotation.x += obj.rotSpeed;
+                    obj.mesh.rotation.y += obj.rotSpeed;
+                    obj.mesh.position.y += Math.sin(time + obj.bobOffset) * obj.bobSpeed;
+                });
+
+                this.renderer.render(this.scene, this.camera);
+            }
+        }
+
+        // --- APP LOGIC ---
+        const app = {
+            products: [
+                { id: 1, name: 'handcraft frame with indie prints', category: 'Handcrafts', price: 600, desc: 'Handcrafted frame with unique indie prints.', icon: '🖼️', img: 'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?auto=format&fit=crop&q=80&w=400' },
+                { id: 2, name: 'Ceramic Succulent Trio', category: 'Plants', price: 1200, desc: 'Set of three artisan pots with rare succulents.', icon: '🌵', img: 'https://images.unsplash.com/photo-1485955900006-10f4d324d445?auto=format&fit=crop&q=80&w=400' },
+                { id: 3, name: 'Macrame Wall Hanging', category: 'Handcrafts', price: 850, desc: 'Large bohemian style macrame for your home.', icon: '🧶', img: 'https://images.unsplash.com/photo-1535191036333-e16862599258?auto=format&fit=crop&q=80&w=400' },
+                { id: 4, name: 'Fiddle Leaf Fig', category: 'Plants', price: 1500, desc: 'Stunning indoor tree for modern spaces.', icon: '🌿', img: 'https://images.unsplash.com/photo-1542601906960-daaaaf4e4854?auto=format&fit=crop&q=80&w=400' }
+            ],
+            cart: JSON.parse(localStorage.getItem('cart')) || [],
+            wishlist: JSON.parse(localStorage.getItem('wishlist')) || [],
+            user: JSON.parse(localStorage.getItem('user')) || null,
+            currentView: 'home',
+            filter: 'All',
+            searchQuery: '',
+
+            init() {
+                lucide.createIcons();
+                this.render();
+                this.updateCartUI();
+
+                // Form listener
+                document.getElementById('product-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addProduct();
+                });
+            },
+
+            navigate(view) {
+                this.currentView = view;
+                this.render();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+
+            render() {
+                const root = document.getElementById('app-root');
+                if (this.currentView === 'home') {
+                    root.innerHTML = `
+                        <div class="hero">
+                            <h1>Artisan Roots</h1>
+                            <p>Handcrafted with love, delivered with care</p>
+                            <div class="controls">
+                                <div class="search-bar">
+                                    <i data-lucide="search" size="18"></i>
+                                    <input type="text" placeholder="Search products..." id="search-input" value="${this.searchQuery}" oninput="app.handleSearch(this.value)">
+                                </div>
+                                <div class="category-tabs">
+                                    <div class="tab ${this.filter === 'All' ? 'active' : ''}" onclick="app.setFilter('All')">All</div>
+                                    <div class="tab ${this.filter === 'Handcrafts' ? 'active' : ''}" onclick="app.setFilter('Handcrafts')">Handcrafts</div>
+                                    <div class="tab ${this.filter === 'Plants' ? 'active' : ''}" onclick="app.setFilter('Plants')">Plants</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-grid" id="product-list">
+                            ${this.renderProducts()}
+                        </div>
+                    `;
+                }
+                lucide.createIcons();
+            },
+
+            renderProducts() {
+                const filtered = this.products.filter(p => {
+                    const matchesCategory = this.filter === 'All' || p.category === this.filter;
+                    const matchesSearch = p.name.toLowerCase().includes(this.searchQuery.toLowerCase());
+                    return matchesCategory && matchesSearch;
+                });
+
+                if (filtered.length === 0) return `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; opacity: 0.5;">No products found matching your search.</div>`;
+
+                return filtered.map(p => `
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="${p.img}" alt="${p.name}">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-category">${p.category}</div>
+                            <h3 class="product-name">${p.name}</h3>
+                            <div class="product-price">INR ${p.price}</div>
+                        </div>
+                        <div class="product-footer">
+                            <button class="btn-add" onclick="app.addToCart(${p.id})">
+                                <i data-lucide="shopping-cart" size="18"></i> Add to Cart
+                            </button>
+                            <button class="wishlist-btn ${this.wishlist.includes(p.id) ? 'active' : ''}" onclick="app.toggleWishlist(${p.id})">
+                                <i data-lucide="heart" size="24" fill="${this.wishlist.includes(p.id) ? 'currentColor' : 'none'}"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            handleSearch(val) {
+                this.searchQuery = val;
+                // Immediate update of grid only
+                const list = document.getElementById('product-list');
+                if (list) list.innerHTML = this.renderProducts();
+                lucide.createIcons();
+            },
+
+            setFilter(cat) {
+                this.filter = cat;
+                this.render();
+            },
+
+            addToCart(id) {
+                const product = this.products.find(p => p.id === id);
+                this.cart.push({ ...product, cartId: Date.now() });
+                this.save();
+                this.updateCartUI();
+                this.showToast(`Added ${product.name} to cart!`);
+            },
+
+            removeFromCart(cartId) {
+                this.cart = this.cart.filter(item => item.cartId !== cartId);
+                this.save();
+                this.updateCartUI();
+            },
+
+            toggleWishlist(id) {
+                if (this.wishlist.includes(id)) {
+                    this.wishlist = this.wishlist.filter(wid => wid !== id);
+                } else {
+                    this.wishlist.push(id);
+                }
+                this.save();
+                this.render();
+            },
+
+            updateCartUI() {
+                const count = document.getElementById('cart-count');
+                count.innerText = this.cart.length;
+
+                const list = document.getElementById('cart-items');
+                if (list) {
+                    list.innerHTML = this.cart.map(item => `
+                        <div class="cart-item">
+                            <div class="cart-item-img"><img src="${item.img}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;"></div>
+                            <div style="flex:1">
+                                <div style="font-weight:600">${item.name}</div>
+                                <div style="opacity:0.7">INR ${item.price}</div>
+                            </div>
+                            <i data-lucide="trash-2" style="cursor:pointer; color: var(--primary);" onclick="app.removeFromCart(${item.cartId})"></i>
+                        </div>
+                    `).join('') || '<p style="text-align:center; padding: 2rem; opacity:0.5;">Your cart is empty.</p>';
+                    lucide.createIcons();
+                }
+
+                const total = this.cart.reduce((sum, item) => sum + item.price, 0);
+                document.getElementById('cart-total').innerText = `Total: INR ${total}`;
+            },
+
+            toggleCart() {
+                const modal = document.getElementById('cart-modal');
+                modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+                this.updateCartUI();
+            },
+
+            showAdmin() {
+                document.getElementById('admin-modal').style.display = 'flex';
+                this.updateAdminInventory();
+            },
+
+            hideAdmin() {
+                document.getElementById('admin-modal').style.display = 'none';
+            },
+
+            addProduct() {
+                const name = document.getElementById('p-name').value;
+                const cat = document.getElementById('p-category').value;
+                const price = parseInt(document.getElementById('p-price').value);
+                const desc = document.getElementById('p-desc').value;
+
+                const newProd = {
+                    id: Date.now(),
+                    name,
+                    category: cat,
+                    price,
+                    desc,
+                    img: cat === 'Plants' ? 'https://images.unsplash.com/photo-1463936575829-25148e1db1b8?auto=format&fit=crop&q=80&w=400' : 'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?auto=format&fit=crop&q=80&w=400'
+                };
+
+                this.products.unshift(newProd);
+                this.save();
+                this.render();
+                this.updateAdminInventory();
+                document.getElementById('product-form').reset();
+                this.showToast("Product added successfully!");
+            },
+
+            updateAdminInventory() {
+                const list = document.getElementById('admin-inventory-list');
+                list.innerHTML = this.products.map(p => `
+                    <div style="display:flex; justify-content:space-between; padding:0.5rem; border-bottom:1px solid var(--glass-border);">
+                        <span>${p.name} (${p.category})</span>
+                        <span>INR ${p.price}</span>
+                    </div>
+                `).join('');
+            },
+
+            toggleLogin() {
+                const modal = document.getElementById('auth-modal');
+                modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+            },
+
+            handleGoogleAuth() {
+                // Mock Google Auth
+                this.user = { name: 'Indie Artist', email: 'artist@indie.com' };
+                this.save();
+                document.getElementById('user-display').innerText = this.user.name;
+                this.toggleLogin();
+                this.showToast("Signed in with Google!");
+            },
+
+            checkout() {
+                if (this.cart.length === 0) return this.showToast("Cart is empty!");
+                this.cart = [];
+                this.save();
+                this.updateCartUI();
+                this.toggleCart();
+                this.showToast("Order placed successfully! Check your email.");
+
+                // Simulate order history
+                const orders = JSON.parse(localStorage.getItem('orders')) || [];
+                orders.push({ date: new Date().toLocaleDateString(), items: this.cart.length, total: '??' });
+                localStorage.setItem('orders', JSON.stringify(orders));
+            },
+
+            save() {
+                localStorage.setItem('cart', JSON.stringify(this.cart));
+                localStorage.setItem('wishlist', JSON.stringify(this.wishlist));
+                localStorage.setItem('user', JSON.stringify(this.user));
+                localStorage.setItem('products', JSON.stringify(this.products));
+            },
+
+            showToast(msg) {
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed; bottom: 2rem; right: 2rem;
+                    background: var(--accent); color: var(--bg-dark);
+                    padding: 1rem 2rem; border-radius: 10px;
+                    font-weight: 700; z-index: 2000;
+                    animation: slideIn 0.3s ease-out;
+                `;
+                toast.innerText = msg;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.animation = 'slideOut 0.3s ease-in forwards';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        };
+
+        // Custom animations for toast
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }
+            @keyframes slideOut { from { transform: translateX(0); } to { transform: translateX(120%); } }
+        `;
+        document.head.appendChild(style);
+
+        // Load persisted products
+        const savedProds = localStorage.getItem('products');
+        if (savedProds) app.products = JSON.parse(savedProds);
+
+        // Init everything
+        document.addEventListener('DOMContentLoaded', () => {
+            new Scene3D();
+            app.init();
+            if (app.user) document.getElementById('user-display').innerText = app.user.name;
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</body>
+
+</html>
